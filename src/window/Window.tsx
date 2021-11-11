@@ -1,6 +1,11 @@
 import React from "react";
 import {Dimensions, StyleSheet, Text, View} from "react-native";
-import {PanGestureHandler, PanGestureHandlerGestureEvent} from "react-native-gesture-handler";
+import {
+  PanGestureHandler,
+  PanGestureHandlerGestureEvent,
+  TapGestureHandler,
+  TapGestureHandlerGestureEvent,
+} from "react-native-gesture-handler";
 import Animated, {
   useAnimatedGestureHandler,
   useAnimatedStyle,
@@ -8,7 +13,6 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import ActionButton from "./ActionButton";
-import ExpanderPoint from "./ExpanderPoint";
 
 const colors = ["#FCBE07", "#13CA39", "#F25056"];
 
@@ -35,12 +39,6 @@ const Window: React.FC<WindowProps> = ({title, children}) => {
     borderRadius.value = withTiming(0);
   };
 
-  const shrinkWindow = () => {
-    rHeight.value = withTiming(height * 0.45);
-    rWidth.value = withTiming(width * 0.45);
-    borderRadius.value = withTiming(10);
-  };
-
   const minizeWindow = () => {
     opacity.value = 1;
     scale.value = 0;
@@ -64,6 +62,14 @@ const Window: React.FC<WindowProps> = ({title, children}) => {
     },
   });
 
+  const onTapGestureEvent = useAnimatedGestureHandler<TapGestureHandlerGestureEvent>({
+    onActive: (_) => {
+      rHeight.value = withTiming(height * 0.45);
+      rWidth.value = withTiming(width * 0.45);
+      borderRadius.value = withTiming(10);
+    },
+  });
+
   const rStyle = useAnimatedStyle(() => {
     return {
       width: rWidth.value,
@@ -79,8 +85,8 @@ const Window: React.FC<WindowProps> = ({title, children}) => {
       <View style={{flex: 1}}>
         <PanGestureHandler onGestureEvent={onGestureEvent}>
           <Animated.View>
-            <div onDoubleClick={shrinkWindow}>
-              <View style={styles.windowTitleBar}>
+            <TapGestureHandler numberOfTaps={2} onGestureEvent={onTapGestureEvent}>
+              <Animated.View style={styles.windowTitleBar}>
                 <View style={styles.placeHolder} />
                 <Text style={styles.windowTitle}>{title}</Text>
                 <View style={styles.windowButtonSection}>
@@ -88,8 +94,8 @@ const Window: React.FC<WindowProps> = ({title, children}) => {
                   <ActionButton color={colors[1]} onPress={expandWindow} />
                   <ActionButton color={colors[2]} onPress={() => {}} />
                 </View>
-              </View>
-            </div>
+              </Animated.View>
+            </TapGestureHandler>
           </Animated.View>
         </PanGestureHandler>
         {children}

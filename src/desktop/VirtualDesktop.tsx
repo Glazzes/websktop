@@ -1,12 +1,14 @@
 import React from "react";
 import {Dimensions, StyleSheet, Text, View} from "react-native";
 
-const {width} = Dimensions.get("window");
+type VirtualDesktopProps = {
+  index: number;
+};
 
-const VirtualDesktop = () => {
+const VirtualDesktop: React.FC<VirtualDesktopProps> = ({index}) => {
   return (
-    <View>
-      <Text></Text>
+    <View style={styles.desktop}>
+      <Text>Hello world {index}</Text>
     </View>
   );
 };
@@ -15,7 +17,7 @@ export default VirtualDesktop;
 
 const styles = StyleSheet.create({
   desktop: {
-    width,
-    flex: 1,
+    width: "100%",
+    height: "100%",
   },
 });
